@@ -1,0 +1,72 @@
+# argocd/apps.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kargo-helm-dev
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: kargo-helm:dev
+spec:
+  project: kargo-helm
+  source:
+    repoURL: https://github.com/cuistops/kargo-helm.git
+    targetRevision: HEAD
+    path: charts/guestbook
+    helm:
+      valueFiles:
+      - /env/dev/values.yaml
+      - /env/dev/feature-flags.yaml
+  destination:
+    name: demo
+    namespace: kargo-helm-dev
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kargo-helm-staging
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: kargo-helm:staging
+spec:
+  project: kargo-helm
+  source:
+    repoURL: https://github.com/cuistops/kargo-helm.git
+    targetRevision: HEAD
+    path: charts/guestbook
+    helm:
+      valueFiles:
+      - /env/staging/values.yaml
+      - /env/staging/feature-flags.yaml
+  destination:
+    name: demo
+    namespace: kargo-helm-staging
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kargo-helm-prod
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: kargo-helm:prod
+spec:
+  project: kargo-helm
+  source:
+    repoURL: https://github.com/cuistops/kargo-helm.git
+    targetRevision: HEAD
+    path: charts/guestbook
+    helm:
+      valueFiles:
+      - /env/prod/values.yaml
+      - /env/prod/feature-flags.yaml
+  destination:
+    name: demo
+    namespace: kargo-helm-prod
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
